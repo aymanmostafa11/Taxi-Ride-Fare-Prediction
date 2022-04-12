@@ -1,0 +1,4 @@
+- for taxi value in name column all the price values equal Nan, So if we drop null rows for price we will lose taxi value.
+- there is strong correlation between rain and weather columns.
+- temp has strong positive correlation with clouds
+- correlation between weather features and taxiRides features is so bad.
