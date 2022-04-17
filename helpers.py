@@ -75,7 +75,7 @@ class Model:
       Metric :
         an Sk-Learn evaluation function to asses the model on (default is MSE)
     '''
-    features = self.__changeDegreeOf(features, polynomialDegree)
+    features = self.changeDegreeOf(features, polynomialDegree)
     scores = cross_val_score(model, features, label, cv = k, scoring = metrics.make_scorer(metric))
     print(f"Average Score : {sum(scores) / k}")
 
