@@ -1,8 +1,8 @@
 from sklearn import linear_model
 from sklearn import metrics
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.preprocessing import PolynomialFeatures
-
+from sklearn.preprocessing import OneHotEncoder, PolynomialFeatures , LabelEncoder , MinMaxScaler , StandardScaler
+import pandas as pd
 class Model:
 
   # Cache
@@ -92,3 +92,39 @@ class Model:
     '''
     data = tuple(train_test_split(dataFeatures, dataLabel, shuffle=True, random_state=10, test_size= test_size))
     return {"trainFeatures":data[0], "testFeatures": data[1], "trainLabel": data[2], "testLabel": data[3]}
+
+class preProcessing:
+  
+  def scale(self,dataFeatures,type = "minMax"):
+    '''
+    Scale data in specific range
+    dataFeatures : data
+    type: method of scaling to use
+    return: scaled features
+    '''
+    scaler = None
+    if type == "minMax":
+      scaler = MinMaxScaler()
+    elif type == "standardization":
+      scaler = StandardScaler()  
+    scaledDataFeatures = scaler.fit_transform(dataFeatures)    
+    return scaledDataFeatures
+
+  def encode(self,data,features, method = "label"):
+    ''' 
+    change data features values from strings to numeric values
+    data: dataframe 
+    features: non integer features to encode
+    method: encoding technique to change feature values
+    return: encoded features
+    '''
+    encoder = None
+    if method == "label":
+      encoder = LabelEncoder()
+    elif method == "oneHot":
+      encoder = OneHotEncoder()
+    for feature in features:
+      data[feature] = encoder.fit_transform(data[feature])
+
+  
+               
