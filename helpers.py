@@ -1,6 +1,7 @@
 from sklearn import linear_model
 from sklearn import metrics
 from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import OneHotEncoder, PolynomialFeatures , LabelEncoder , MinMaxScaler , StandardScaler
 import pandas as pd
 class Model:
@@ -127,4 +128,13 @@ class preProcessing:
       data[feature] = encoder.fit_transform(data[feature])
 
   
-               
+  def reduceDimentionsOf(self,dataFeatures,reduceTo = 1):
+    '''
+    reduce features of data from dimention n to dimention k using PCA algorithm
+    dataFeatures: features to reduce
+    reduceTo: number of components to keep
+    return reduced data in lower dimentions
+    '''
+    pca = PCA(n_components=1)
+    reducedDataFeatures = pca.fit_transform(dataFeatures)
+    return reducedDataFeatures
