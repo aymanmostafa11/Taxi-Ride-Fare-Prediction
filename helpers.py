@@ -140,7 +140,7 @@ class preProcessing:
     return reducedDataFeatures
   
   
-    def encode_name(self,names):
+  def encode_name(self,names):
     """
     encoding the name col to numbers that represent the price for each class
     :param names: the column to be encoded
