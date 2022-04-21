@@ -154,11 +154,10 @@ class preProcessing:
 
   def drop_adjust(self,data):
     """
-    dropping unnecessary columns, dropping rows that contain null prices
+    dropping unnecessary columns
     and giving a col a meaningful name
     :param data: whole dataframe
     :return: adujest dataframe
     """
     data.drop(['date', 'id', 'product_id', 'location'], axis=1, inplace=True)
-    data.dropna(axis=0, subset=['price'], inplace=True)
     data.rename(columns={'name': 'ride_class'}, inplace=True)
