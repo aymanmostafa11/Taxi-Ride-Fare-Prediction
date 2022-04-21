@@ -138,3 +138,27 @@ class preProcessing:
     pca = PCA(n_components=1)
     reducedDataFeatures = pca.fit_transform(dataFeatures)
     return reducedDataFeatures
+  
+  
+    def encode_name(self,names):
+    """
+    encoding the name col to numbers that represent the price for each class
+    :param names: the column to be encoded
+    :return: encoded column
+    """
+    services = ['Shared', 'UberPool', 'Lyft', 'Taxi', 'WAV', 'UberX', 'UberXL', 'Lyft XL', 'Lux', 'Black',
+                'Lux Black', 'Black SUV', 'Lux Black XL']
+    labels = [0, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4]
+    names.replace(services, labels, inplace=True)
+    
+
+  def drop_adjust(self,data):
+    """
+    dropping unnecessary columns, dropping rows that contain null prices
+    and giving a col a meaningful name
+    :param data: whole dataframe
+    :return: adujest dataframe
+    """
+    data.drop(['date', 'id', 'product_id', 'location'], axis=1, inplace=True)
+    data.dropna(axis=0, subset=['price'], inplace=True)
+    data.rename(columns={'name': 'ride_class'}, inplace=True)
