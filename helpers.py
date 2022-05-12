@@ -80,6 +80,7 @@ class Model:
     scores = cross_val_score(model, features, label, cv = k, scoring = metrics.make_scorer(metric))
     print(f"Average Score : {sum(scores) / k}")
 
+
   def splitData(self, dataFeatures, dataLabel, test_size = 0.2):
     '''
     Splits data into train test set
@@ -94,7 +95,7 @@ class Model:
     data = tuple(train_test_split(dataFeatures, dataLabel, shuffle=True, random_state=10, test_size= test_size))
     return {"trainFeatures":data[0], "testFeatures": data[1], "trainLabel": data[2], "testLabel": data[3]}
 
-class preProcessing:
+class PreProcessing:
   
   def scale(self,dataFeatures,type = "minMax"):
     '''
