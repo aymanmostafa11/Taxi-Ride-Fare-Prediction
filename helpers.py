@@ -96,7 +96,9 @@ class Model:
     return {"trainFeatures":data[0], "testFeatures": data[1], "trainLabel": data[2], "testLabel": data[3]}
 
 class PreProcessing:
-  
+
+  encoder = None
+
   def scale(self,dataFeatures,type = "minMax"):
     '''
     Scale data in specific range
@@ -112,7 +114,7 @@ class PreProcessing:
     scaledDataFeatures = scaler.fit_transform(dataFeatures)    
     return scaledDataFeatures
 
-  def encode(self,data,features, method = "label"):
+  def encode(self,data,features, method = "label" ):
     ''' 
     change data features values from strings to numeric values
     data: dataframe 
@@ -120,13 +122,17 @@ class PreProcessing:
     method: encoding technique to change feature values
     return: encoded features
     '''
-    encoder = None
-    if method == "label":
-      encoder = LabelEncoder()
-    elif method == "oneHot":
-      encoder = OneHotEncoder()
+    if self.encoder == None:
+      if method == "label":
+        self.encoder = LabelEncoder()
+      elif method == "oneHot":
+        self.encoder = OneHotEncoder()
+      transform_ = self.encoder.fit_transform
+    else:
+      transform_ = self.encoder.transform
+
     for feature in features:
-      data[feature] = encoder.fit_transform(data[feature])
+      data[feature] = transform_(data[feature])
 
   
   def reduceDimentionsOf(self,dataFeatures,reduceTo = 1):
