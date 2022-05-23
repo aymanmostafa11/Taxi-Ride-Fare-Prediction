@@ -97,7 +97,7 @@ class Model:
 
 class PreProcessing:
 
-  encoder = None
+  encoders = {}
 
   def scale(self,dataFeatures,type = "minMax"):
     '''
@@ -114,25 +114,30 @@ class PreProcessing:
     scaledDataFeatures = scaler.fit_transform(dataFeatures)    
     return scaledDataFeatures
 
-  def encode(self,data,features, method = "label" ):
-    ''' 
+  def encode(self,data,features):
+    '''
     change data features values from strings to numeric values
-    data: dataframe 
+    data: dataframe
     features: non integer features to encode
     method: encoding technique to change feature values
     return: encoded features
     '''
-    if self.encoder == None:
-      if method == "label":
-        self.encoder = LabelEncoder()
-      elif method == "oneHot":
-        self.encoder = OneHotEncoder()
-      transform_ = self.encoder.fit_transform
-    else:
-      transform_ = self.encoder.transform
 
     for feature in features:
-      data[feature] = transform_(data[feature])
+      encoder = LabelEncoder()
+      self.encoders[feature] = encoder.fit(data[feature])
+      data[feature] = encoder.transform(data[feature])
+
+  def encode_cached(self,data,features):
+
+    '''
+    Encode categorical features with previously fit encoders
+    data: Dataframe
+    features: features to be encoded
+    return: encoded features
+    '''
+    for feature in features:
+      data[feature] = self.encoders[feature].transform(data[feature])
 
   
   def reduceDimentionsOf(self,dataFeatures,reduceTo = 1):
