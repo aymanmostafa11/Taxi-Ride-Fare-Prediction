@@ -158,8 +158,11 @@ class PreProcessing:
     :param names: the column to be encoded
     :return: encoded column
     """
-    services = ['Shared', 'UberPool', 'Lyft', 'Taxi', 'WAV', 'UberX', 'UberXL', 'Lyft XL', 'Lux', 'Black',
+    services = ['Taxi', 'Shared', 'UberPool', 'Lyft', 'WAV', 'UberX', 'UberXL', 'Lyft XL', 'Lux', 'Black',
                 'Lux Black', 'Black SUV', 'Lux Black XL']
+    '''
+    0: unknown, 1: cheap, 2: moderate, 3: expensive, 4: very expensive
+    '''
     labels = [0, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4]
     names.replace(services, labels, inplace=True)
     
