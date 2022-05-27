@@ -4,9 +4,9 @@ from sklearn import metrics
 from helpers import PreProcessing
 
 preprocessing = PreProcessing()
-loaded_encoders = load(open('savedEncoders/saved_classificationEncoders', 'rb'))
-loaded_scalers = load(open('savedScalars/saved_classificationScalers', 'rb'))
-loaded_models = load(open('savedModels/saved_classificationModels', 'rb'))
+loaded_encoders = load(open('saved_classificationEncoders', 'rb'))
+loaded_scalers = load(open('saved_classificationScalers', 'rb'))
+loaded_models = load(open('saved_classificationModels', 'rb'))
 preprocessing.encoders = loaded_encoders
 preprocessing.scalingCache = loaded_scalers
 

@@ -6,8 +6,8 @@ from helpers import PreProcessing , Model
 
 
 preprocessing = PreProcessing()
-loaded_encoders = load(open('savedEncoders/saved_regressionEncoders', 'rb'))
-loaded_models = load(open('savedModels/saved_regressionModels', 'rb'))
+loaded_encoders = load(open('saved_regressionEncoders', 'rb'))
+loaded_models = load(open('saved_regressionModels', 'rb'))
 preprocessing.encoders = loaded_encoders
 
 
