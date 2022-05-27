@@ -2,8 +2,10 @@ from sklearn import linear_model
 from sklearn import metrics
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.decomposition import PCA
-from sklearn.preprocessing import OneHotEncoder, PolynomialFeatures , LabelEncoder , MinMaxScaler , StandardScaler
+from sklearn.preprocessing import OneHotEncoder, PolynomialFeatures , LabelEncoder , MinMaxScaler , StandardScaler, scale
 import pandas as pd
+import numpy as np
+
 class Model:
 
   # Cache
@@ -98,6 +100,7 @@ class Model:
 class PreProcessing:
 
   encoders = {}
+  scalingCache = {}
 
   def scale(self,dataFeatures,type = "minMax"):
     '''
@@ -106,13 +109,26 @@ class PreProcessing:
     type: method of scaling to use
     return: scaled features
     '''
+    scalerType = None 
     scaler = None
     if type == "minMax":
-      scaler = MinMaxScaler()
+      scalerType = MinMaxScaler
     elif type == "standardization":
-      scaler = StandardScaler()  
-    scaledDataFeatures = scaler.fit_transform(dataFeatures)    
-    return scaledDataFeatures
+      scalerType = StandardScaler 
+    for feature in dataFeatures:
+      scaler = scalerType()
+      self.scalingCache[feature] = scaler.fit(np.reshape(dataFeatures[feature].to_numpy(),(-1,1)))    
+      dataFeatures[feature] = scaler.transform(np.reshape(dataFeatures[feature].to_numpy(),(-1,1)))
+    
+
+  def scaleCached(self,dataFeatures):
+   '''
+   scale features with priviously fit scalers
+   dataFeatures: features to scale
+   '''
+
+   for feature in dataFeatures:
+      dataFeatures[feature] = self.scalingCache[feature].transform(np.reshape(dataFeatures[feature].to_numpy(),(-1,1)))
 
   def encode(self,data,features):
     '''

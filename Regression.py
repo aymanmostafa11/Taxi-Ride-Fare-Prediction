@@ -12,7 +12,7 @@ Original file is located at
 import pandas as pd
 from sklearn import linear_model
 from sklearn import metrics
-from helpers import Model , preProcessing
+from helpers import Model , PreProcessing
 
 taxiRides = pd.read_csv('‪taxi‬‏/taxi-rides.csv')
 weather = pd.read_csv('‪taxi‬‏/weather.csv')
@@ -75,7 +75,7 @@ print(f"There are {taxiNullValues} price null values with Taxi as subtype from a
 # Preprocessing
 
 # Encoding
-preProcessing = preProcessing()
+preProcessing = PreProcessing()
 preProcessing.encode_name(mergedData['name'])
 preProcessing.drop_adjust(mergedData)
 

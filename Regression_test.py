@@ -1,18 +1,19 @@
 from pickle import load
+from pyexpat import model
 import pandas as pd
 from sklearn import metrics
-from helpers import PreProcessing
+from helpers import PreProcessing , Model
+
 
 preprocessing = PreProcessing()
-loaded_encoders = load(open('savedEncoders/saved_classificationEncoders', 'rb'))
-loaded_scalers = load(open('savedScalars/saved_classificationScalers', 'rb'))
-loaded_models = load(open('savedModels/saved_classificationModels', 'rb'))
+loaded_encoders = load(open('savedEncoders/saved_regressionEncoders', 'rb'))
+loaded_models = load(open('savedModels/saved_regressionModels', 'rb'))
 preprocessing.encoders = loaded_encoders
-preprocessing.scalingCache = loaded_scalers
 
-taxiRides = pd.read_csv('sampleTests/taxi-test-samples-Classification.csv')
+
+taxiRides = pd.read_csv('sampleTests/taxi-test-samples-Regression.csv')
 weather = pd.read_csv('taxi/weather.csv')
-#weather = pd.read_csv('/content/classification/weather.csv')
+
 # Data Cleaning
 weather['rain'].fillna(0,inplace=True)
 
@@ -21,8 +22,8 @@ weather['rain'].fillna(0,inplace=True)
 weatherDate = pd.to_datetime(weather['time_stamp'], unit='s').apply(lambda x: x.strftime(('%Y-%m-%d')))
 taxiRidesDate = pd.to_datetime(taxiRides['time_stamp'], unit='ms').apply(lambda x: x.strftime(('%Y-%m-%d')))
 weather['date'] = weatherDate
-taxiRides['date'] = taxiRidesDate
 
+taxiRides['date'] = taxiRidesDate
 
 # Joining Dataframes based on date
 
@@ -57,14 +58,19 @@ mergedData.drop(['temp','clouds','sunnyDay','rainType','rain','wind','pressure',
 lowerDimensionWeatherData = preprocessing.reduceDimentionsOf(subsetOfData)
 mergedData['weatherState'] = lowerDimensionWeatherData
 
-# split & scale 
+# split 
 
-dataFeatures = mergedData.drop(['RideCategory'],axis=1)
-preprocessing.scaleCached(dataFeatures)
-dataLabel = mergedData['RideCategory']
+dataFeatures = mergedData.drop(['price'],axis=1)
+dataLabel = mergedData['price']
 
 # Models
+model = Model()
+linearModel = loaded_models['LinearRegression']
+polyModel = loaded_models['PolyLinearRegression']
 
-for model in loaded_models:
-  print(model)
-  print(metrics.f1_score(dataLabel, loaded_models[model].predict(dataFeatures), average='micro'))
+print("LinearRegression")
+print(metrics.r2_score(dataLabel, linearModel.predict(dataFeatures)))
+
+print("PolynomialRegression")
+dataFeatures = model.changeDegreeOf(dataFeatures,degree=4)
+print(metrics.r2_score(dataLabel, polyModel.predict(dataFeatures)))
