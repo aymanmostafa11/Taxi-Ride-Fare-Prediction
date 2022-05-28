@@ -35,8 +35,9 @@ mergedData = pd.merge(taxiRides,weather.drop_duplicates(subset=['date', 'locatio
 columnsToDrop = ['id', 'date', 'product_id', 'location']
 mergedData.drop(columnsToDrop,axis = 1,inplace=True)
 
-# Name Feature
-preprocessing.encode_name(mergedData['name'])
+# Name Feature & TargetFeature Encoding
+preprocessing.encodeManually(mergedData['name'],preprocessing.nameFeatureMap)
+preprocessing.encodeManually(mergedData['RideCategory'],preprocessing.labelFeatureMap)
 
 # Encoding with previously fit encoders
 nonIntegerColumns = [col for col in mergedData.columns if mergedData[col].dtypes == object]
