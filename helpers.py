@@ -10,6 +10,7 @@ class Model:
 
   # Cache
   lastLinearModel = None
+  lastClassificationModel = None
 
   def fitLinearModel(self, features, label, evaluationFunction = None,
                      validationFeatures = None, validationLabel = None):
@@ -59,7 +60,56 @@ class Model:
     return self.fitLinearModel(features, label, evaluationFunction,
                                              validationFeatures,
                                              validationLabel)
-    
+
+
+  def fitClassificationModel(self, modelClass, params: dict, features=None, label=None,
+                             evaluationFunction=metrics.accuracy_score,
+                             validationFeatures=None, validationLabel=None, dataDictionary=None):
+    '''
+
+    fit any given classification model on data and print the accuracy + other metric provided
+    Params:
+        :param modelClass : any class that implements .fit(), .score() and .predict()
+        :param params : dictionary containing the paramaeters of modelClass
+        :param features : data features (X)
+        :param label : data label (Y)
+        :param evaluationFunction : function to assess the model against after fitting
+        :param -optional- validationFeatures, validationLabel : validation data to test model after fitting
+        :param -optional- dataDictionary : a dictionary containing train and test features and labels (if provided
+        features, label, validationFeatures and validationLabel will be ignored and data will be fetched from the dict
+
+      Returns :
+        modelClass instance fit on data
+    '''
+    if dataDictionary is not None:
+      features = dataDictionary['trainFeatures']
+      label = dataDictionary['trainLabel']
+      validationFeatures = dataDictionary['testFeatures']
+      validationLabel = dataDictionary['testLabel']
+
+    model = modelClass(**params)
+    model.fit(features, label)
+
+    print(f"Training Accuracy : {model.score(features, label)}")
+
+    trainPred = model.predict(features)
+    evaluationParams = {'y_true' : label, 'y_pred' : trainPred}
+
+    if evaluationFunction is metrics.f1_score:
+      evaluationParams['average'] = 'micro'
+
+    print(f"Training {evaluationFunction.__name__} : {evaluationFunction(**evaluationParams)}")
+
+    if validationFeatures is not None:
+      evaluationParams['y_true'] = validationLabel
+      evaluationParams['y_pred'] = model.predict(validationFeatures)
+
+      print(f"\nTest Accuracy : {model.score(dataDictionary['testFeatures'], dataDictionary['testLabel'])}")
+      print(f"Test {evaluationFunction.__name__} : {evaluationFunction(**evaluationParams)}")
+
+    self.lastClassificationModel = model
+    return model
+
 
   def changeDegreeOf(self, features, degree = 1):
     polynomialFunction = PolynomialFeatures(degree=degree)
@@ -82,7 +132,6 @@ class Model:
     scores = cross_val_score(model, features, label, cv = k, scoring = metrics.make_scorer(metric))
     print(f"Average Score : {sum(scores) / k}")
 
-
   def splitData(self, dataFeatures, dataLabel, test_size = 0.2):
     '''
     Splits data into train test set
@@ -96,6 +145,7 @@ class Model:
     '''
     data = tuple(train_test_split(dataFeatures, dataLabel, shuffle=True, random_state=10, test_size= test_size))
     return {"trainFeatures":data[0], "testFeatures": data[1], "trainLabel": data[2], "testLabel": data[3]}
+
 
 class PreProcessing:
 
