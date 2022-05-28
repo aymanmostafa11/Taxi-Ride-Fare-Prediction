@@ -151,6 +151,7 @@ class PreProcessing:
 
   encoders = {}
   scalingCache = {}
+  featuresUniqueValues = {}
 
   nameFeatureMap = {'Taxi': 0,
                     'Shared': 1, 'UberPool': 1, 'Lyft': 1, 'WAV': 1, 'UberX': 1,
@@ -177,6 +178,7 @@ class PreProcessing:
       scalerType = StandardScaler 
     for feature in dataFeatures:
       scaler = scalerType()
+      scaler.clip = False
       self.scalingCache[feature] = scaler.fit(np.reshape(dataFeatures[feature].to_numpy(),(-1,1)))    
       dataFeatures[feature] = scaler.fit_transform(np.reshape(dataFeatures[feature].to_numpy(),(-1,1)))
       validationFeatures[feature] = scaler.transform(np.reshape(validationFeatures[feature].to_numpy(),(-1,1)))
@@ -189,6 +191,7 @@ class PreProcessing:
    '''
 
    for feature in dataFeatures:
+      self.scalingCache[feature].clip = False
       dataFeatures[feature] = self.scalingCache[feature].transform(np.reshape(dataFeatures[feature].to_numpy(),(-1,1)))
 
   def encode(self,data,features):
@@ -202,7 +205,9 @@ class PreProcessing:
 
     for feature in features:
       encoder = LabelEncoder()
-      self.encoders[feature] = encoder.fit(data[feature])
+      self.featuresUniqueValues[feature] = list(data[feature].unique())
+      self.featuresUniqueValues[feature].append("Unknown")
+      self.encoders[feature] = encoder.fit(self.featuresUniqueValues[feature])
       data[feature] = encoder.transform(data[feature])
 
   def encode_cached(self,data,features):
@@ -214,6 +219,7 @@ class PreProcessing:
     return: encoded features
     '''
     for feature in features:
+      data[feature] = [value if value in self.featuresUniqueValues[feature] else 'Unknown' for value in data[feature]]
       data[feature] = self.encoders[feature].transform(data[feature])
 
   
@@ -242,9 +248,16 @@ class PreProcessing:
     '''
     labels = [0, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4]
     names.replace(services, labels, inplace=True)
-    
+    for name in names:
+      if name not in labels:
+        names.replace(name,0,inplace=True)
+  
   def encodeManually(self, dataColumn:pd.Series, labelMap:dict):
     dataColumn.replace(labelMap, inplace = True)
+    for name in dataColumn:
+      if name not in labelMap.values():
+        dataColumn.replace(name,0,inplace=True)
+
 
   def drop_adjust(self,data):
     """

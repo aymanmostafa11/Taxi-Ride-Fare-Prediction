@@ -36,11 +36,10 @@ def run_test(path):
     preprocessing = PreProcessing()
 
     taxiRides = pd.read_csv(path)
-    weather = pd.read_csv('‪taxi‬‏/weather.csv')
+    weather = pd.read_csv('taxi/weather.csv')
     # weather = pd.read_csv('/content/classification/weather.csv')
-
     regression = True if 'price' in taxiRides.columns else False
-
+    
     if regression:
         cache_path = 'regression_cache'
         target = 'price'
@@ -54,15 +53,16 @@ def run_test(path):
     preprocessing.encoders = cache['encoders']
     loaded_models = cache['models']
     loaded_imputers = cache['imputers']
+    preprocessing.featuresUniqueValues = cache['categoricalFeaturesValues']
 
     # imputing null values
     for feature in taxiRides.columns:
         if feature in loaded_imputers:
-            taxiRides[feature].fillna(loaded_imputers[feature])
+            taxiRides[feature].fillna(loaded_imputers[feature],inplace=True)
 
     # Data Cleaning
     weather['rain'].fillna(0, inplace=True)
-
+  
     # Encoding Timestamps to date
 
     weatherDate = pd.to_datetime(weather['time_stamp'], unit='s').apply(lambda x: x.strftime(('%Y-%m-%d')))
@@ -98,6 +98,12 @@ def run_test(path):
     mergedData['sunnyDay'] = 0
     mergedData['sunnyDay'][mergedData['clouds'] <= 0.1] = 1
 
+    # handling nulls in weather features for unknown sources
+
+    for feature in mergedData:
+       if mergedData[feature].isnull().sum()!=0 and weather.__contains__(feature):
+           mergedData[feature].fillna(weather[feature].mean(),inplace=True)
+
     # PCA
 
     subsetOfData = mergedData[['temp', 'sunnyDay', 'rainType', 'wind', 'pressure', 'humidity']]
@@ -120,5 +126,5 @@ def run_test(path):
     else:
         classification_test(loaded_models, dataFeatures, dataLabel)
 
-run_test('taxi-classification-test-samples.csv')
-run_test('taxi-reg-test-samples.csv')
+run_test('sampleTests/taxi-classification-test-samples.csv')
+run_test('sampleTests/taxi-reg-test-samples.csv')
