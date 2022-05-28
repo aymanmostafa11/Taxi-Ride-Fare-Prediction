@@ -152,6 +152,16 @@ class PreProcessing:
   encoders = {}
   scalingCache = {}
 
+  nameFeatureMap = {'Taxi': 0,
+                    'Shared': 1, 'UberPool': 1, 'Lyft': 1, 'WAV': 1, 'UberX': 1,
+                    'UberXL': 2, 'Lyft XL': 2, 'Lux': 2,
+                    'Black': 3, 'Lux Black': 3,
+                    'Black SUV': 4, 'Lux Black XL': 4}
+
+  labelFeatureMap = {'unknown' : 0, 'cheap' : 1, 'moderate': 2, 'expensive' : 3, 'very expensive': 4}
+
+
+
   def scale(self,dataFeatures,type = "minMax"):
     '''
     Scale data in specific range
@@ -232,6 +242,8 @@ class PreProcessing:
     labels = [0, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4]
     names.replace(services, labels, inplace=True)
     
+  def encodeManually(self, dataColumn:pd.Series, labelMap:dict):
+    dataColumn.replace(labelMap, inplace = True)
 
   def drop_adjust(self,data):
     """
