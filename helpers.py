@@ -162,7 +162,7 @@ class PreProcessing:
 
 
 
-  def scale(self,dataFeatures,type = "minMax"):
+  def scale(self,dataFeatures,type = "minMax",validationFeatures = None):
     '''
     Scale data in specific range
     dataFeatures : data
@@ -178,7 +178,8 @@ class PreProcessing:
     for feature in dataFeatures:
       scaler = scalerType()
       self.scalingCache[feature] = scaler.fit(np.reshape(dataFeatures[feature].to_numpy(),(-1,1)))    
-      dataFeatures[feature] = scaler.transform(np.reshape(dataFeatures[feature].to_numpy(),(-1,1)))
+      dataFeatures[feature] = scaler.fit_transform(np.reshape(dataFeatures[feature].to_numpy(),(-1,1)))
+      validationFeatures[feature] = scaler.transform(np.reshape(validationFeatures[feature].to_numpy(),(-1,1)))
     
 
   def scaleCached(self,dataFeatures):
