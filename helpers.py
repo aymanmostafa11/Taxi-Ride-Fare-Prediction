@@ -237,6 +237,7 @@ class PreProcessing:
   
   def encode_name(self,names):
     """
+    DEPRECATED
     encoding the name col to numbers that represent the price for each class
     :param names: the column to be encoded
     :return: encoded column

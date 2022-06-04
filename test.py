@@ -14,12 +14,12 @@ def reg_test(loaded_models, dataFeatures, dataLabel):
 
     print("LinearRegression")
     pred = linearModel.predict(dataFeatures)
-    print(f"r2 score: {metrics.r2_score(dataLabel, pred)}\n, MSE: {metrics.mean_squared_error(dataLabel, pred)}")
+    print(f"r2 score: {metrics.r2_score(dataLabel, pred)}\nMSE: {metrics.mean_squared_error(dataLabel, pred)}")
 
     print("PolynomialRegression")
     dataFeatures = model.changeDegreeOf(dataFeatures, degree=4)
     pred = polyModel.predict(dataFeatures)
-    print(f"r2 score: {metrics.r2_score(dataLabel, pred)}\n, MSE: {metrics.mean_squared_error(dataLabel, pred)}")
+    print(f"r2 score: {metrics.r2_score(dataLabel, pred)}\nMSE: {metrics.mean_squared_error(dataLabel, pred)}")
 
 def classification_test(loaded_models, dataFeatures, dataLabel):
 
@@ -86,6 +86,7 @@ def run_test(path):
     if not regression:
         preprocessing.encodeManually(mergedData['RideCategory'], PreProcessing.labelFeatureMap)
         mergedData['RideCategory'] = mergedData['RideCategory'].astype(int)
+
     # Encoding with previously fit encoders
     nonIntegerColumns = [col for col in mergedData.columns if mergedData[col].dtypes == object ]
     preprocessing.encode_cached(mergedData, nonIntegerColumns)
@@ -127,8 +128,8 @@ def run_test(path):
         classification_test(loaded_models, dataFeatures, dataLabel)
 
 print("Classification:")
-run_test('sampleTests/taxi-classification-test-samples.csv')
+run_test('sampleTests/taxi-tas-classification-test.csv')
 print()
 print('#' * 20)
 print()
-run_test('sampleTests/taxi-reg-test-samples.csv')
+run_test('sampleTests/taxi-tas-regression-test.csv')

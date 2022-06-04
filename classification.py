@@ -292,8 +292,8 @@ searchParameters = {'criterion' : ['gini', 'entropy'],
                     'n_estimators' : [i for i in range(10, 101, 10)]}
 forestParamSearch = RandomizedSearchCV(RandomForestClassifier(), searchParameters, n_iter = 2)
 
-forestParamSearch.fit(dataFeatures, dataLabel)
-forestParamSearch.best_params_
+# forestParamSearch.fit(dataFeatures, dataLabel)
+# forestParamSearch.best_params_
 
 params = {'criterion'  : 'entropy' , 
           'max_depth' : 30,
