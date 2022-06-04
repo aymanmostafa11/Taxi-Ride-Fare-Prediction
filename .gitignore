@@ -118,3 +118,8 @@ dmypy.json
 
 # Pycharm files
 .idea/
+
+# misc.
+sampleTests/
+taxi/
+Taxi Service Price Prediction.zip
